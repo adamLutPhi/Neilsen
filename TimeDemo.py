@@ -1,4 +1,9 @@
 #Dealing with Time
+"""
+Note: module requires
+1. `tzdata`: in a Command-Line Interface (CLI):
+>>> pip install tzdata 
+"""
 
 # pandas function
 """
@@ -625,6 +630,68 @@ print('20/12/2016')
 # Try march 4th 2016
 
 
+pd.to_datetime('4/3/2016', dayfirst = True )
+#Q. why is it terrible?
+"""
+you can get into trouble so easily
+1. we don't know the format (of date MM/DD/YYYY or DD/MM/YYYY or MMM.DD.YYYY ...?
 
+an Undefined Behavior
+low and behold, what you thought about a timeseries, it starts jumping back n forth in time
+ever Nov is fine
+#Note: pandas is pro-N. America: it follows the US format, by default: MM/DD/YYYY
 
+"""
+
+#Get string representation, from a timestamp, in a desired solution
+
+pd.to_datetime('4/3/2016', dayfirst = True)
+
+# extract the year
+pd.to_datetime('4/3/2016', dayfirst = True).strftime(format = '%Y')
+# Demo
+#2016
+               
+##note: experiement and or the read docs: sometimes it's easier to read the docs!
 # print( ts_dt['Jul 2 2016'] ) #Unxomment me
+
+# More neat Indexing
+
+# even numbers, from 0to 20
+# python indexing : to get every 2: set the jump (third position) to 2:
+print( numbers[::2] )
+               
+
+#     numbers 
+
+print( numbers[15: 1: -1] )
+
+# get period of time
+
+# get me: Jul 2nd , 2016 on the 10th day, set Frequency 60T, and the jump (gap or space)
+
+periodsWithFrequency = td_pd[pd.Period('Jul 2, 2016 `10', freq = '60T')::3 ]
+print( periodsWithFrequency )
+
+##another way : enter just the string (gets converted automatically) 
+
+print( ts_pd['Jul 2, 2016'::3] )
+
+#to go back: start at a later date ( then go backwards )
+
+# go backward (to some case) : start at 2nd of july and go backwards: day by day :
+## set the jump (next Iteration) to  -1
+#Example start from July 3rd, then go backwards
+
+print( ts_pd['Jul 3, 2016'::-1] )
+
+
+
+
+
+
+
+
+
+
+
