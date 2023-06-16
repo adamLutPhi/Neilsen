@@ -1,11 +1,13 @@
 #Data Resampling
-"""It's a whole problem
+"""Head's up: It's a whole problem
 where everybody has:
-either you have something that doesn't have any frequency
+
+1. Either you have something that doesn't have any frequency
 and you want to force it into something that has a frequency
+
 ( Or it just doesn't have the frequency that you want )
 
-#match up 2 time series, more efficientyly
+#match up 2 time series, more efficiently
 
 """
 import pandas as pd
@@ -30,23 +32,25 @@ Q.what does this ffill (forward Fill) actually mean?
 
 
 
-#use prevous month
-#@midnight 12:45 :
-#Notice: they are not timeperiods, but timepoints (in time)
-#lots of way to do the fill
-#the most common is: the forward fill
-#Take the data from the previous self
-#Q. Why is the forward fill is much common than a backwardfill?
-#this case is like those cases, when timeseries is special
-##sometimes, you can interpolate data, (that makes sense!)
-##with timeseries, looking into the future (not so helpful)
-### there was a back-fill
+# Use prevous month
+# @midnight 12:45 :
+# Notice: they are not timeperiods, but timepoints (in time)
+# Lots of way to do the fill
+# The most common is: the forward fill `ffill`
+# Take the data from the previous self
+
+# Q. Why is the forward fill is much common than a backwardfill?
+# A. this case is like those cases, when timeseries is special
+
+## Sometimes, you can interpolate data, (that makes sense!)
+## With timeseries, looking into the future (not so helpful)
+### There was a back-fill
 ### Interpolation: is another form of looking into the future (me: linear Interpolation,  is it?)
-### Takeaway: you can interpolate, unless you know your data, ahead of you
+### Takeaway: you can interpolate, Unless you KNOW your data, ahead of you
 
-#Q. what does the above code and the size, content of your data frame?
+# Q. what does the above code and the size, content of your data frame?
 
-#What does the above code do to the size and content of your data frame?
+# What does the above code do to the size and content of your data frame?
 """think
 original dataframe, has 72 members (72,)
 more frequency -> more data)
@@ -70,23 +74,24 @@ converted = ts.asfreq('3H')
 print(converted[1:10] ) 
 print(ts[1:10]) #it is matching up!
 # It seems to be matching up
-#Q.should I just drop my data (column) is that good?
-#A. No. I'm actually going to move to resampling
-# it is much more flexible
+# Q.should I just drop my data (column) is that good?
+# A. No. I'm actually going to move to resampling
+# It is much more flexible
 """that is one reason why I need resampling
 more flexible than asfreq (the up down conversion)
 """
-#Resampling
-#Resample, every 2 Hours
+# Resampling
+# Resample, every 2 Hours
 resampled = ts.resample('2H').mean()
-"""how it is deciding what number to fill in?
+"""How it is deciding what number to fill in?
 at 2, 2.5  (from 2 ,4)
 at 4 , 4.5
-where does data come from?
+Q.where does data come from?
 A.
 2.5  from (2 ,4)
 4.5 from  (4, 5)
 """
+
 
 print(resampled[1:10] )
 #That is it for regular timeseries data
@@ -109,10 +114,10 @@ irregular_ts_sorted = irregular_ts.sort_index()
 print(irregular_ts_sorted)
 print(irregular_ts_sorted.asfreq('D') )#Daily frequency, now what happens?
 
-# a bunch of NaNs: no method to fill in
+# A bunch of NaNs: no method to fill in
 # (anything doesn't land at 4 o'clock , just drop it )
 print(irregular_ts_sorted.asfreq('D').count() )
-#most of the times: you have to resample (but not with `asfreq` )
+# Most of the times: you have to resample (but not with `asfreq` )
 print(irregular_ts_sorted.asfreq('D').mean() )
 
 print(irregular_ts_sorted.asfreq('D').var() )
@@ -125,20 +130,24 @@ why might you want to do that?
 3. How can I forward-fill only a few days? (hint: .fillna() )
 4. What are some helpful functions to use with a Resampler object ?
 
-logic of documentation
-the more flexible (a function ) is
-the less would be documented
+#Documentation tips
+
+Logic of documentation
+"the more flexible (a function ) is, the less would be documented"
+
+
 aggregation operations
-you do lot of things
-resampling: is aggregation (of many functions)
-do apply to do your own custom function
+
+resampling: is aggregation (amongst many functions)
+Do apply to do your own custom function
 
 A1. we can do an Interpolation; but what if I don't want to do anything?
 
-how can I accomplish that
-None!
+Q. How can I accomplish that
+A. None!
 
 2.  asfreq(): very limied
+
 resample(): produce an object that you can do more things of
 like a resample object
 Q. what do I want to do with it?
@@ -148,7 +157,6 @@ Q. what do I want to do with it?
 4. take its Quantile?
 
 3. ffill
-
 
 """
 print(ts.head())
@@ -163,19 +171,49 @@ print(irregular_ts)
 
 
 #fillna: non values using specific method
-##To fill in Nans
+##To fill-in Nans
 
 print( irregular_ts.fillna(method = 'ffill',  limit=1) ) 
-# I have resampled.Q. is timeseries still irregular?
-#No, not anymore
+# I have
+#Q. is timeseries still irregular?
+#No, not anymore [Takeaway: by filling, timeseries is regularized ]
 
-#Recaop
+#-------
+# Irregular Time Series
 
-rng = pd.date_range('1/1/2011', periods= 72, freq = 'H' )
+# Pentagonal Control Parameters:
+
+#1. numPoints
+
+numPoints1 = 10
+
+#2. startingDate
+
+startingDate1 = '1/1/2011'
+#3. frequency
+
+frequency1 = 'H'
+
+#4. periods
+
+periods1 = 72
+
+#5. is replacable?
+isreplace1 = False
+
+
+#Recap
+
+rng = pd.date_range('1/1/2011' ,  freq = 'H' , periods= 72 )
+
+#or generalized as
+rng = pd.date_range(startingDate1,  freq = frequency1, periods= periods1 )
+
 ts = pd.Series(list(range(len(rng))), index = rng)
 
+
 #Source:https://stackoverflow.com/questions/35204529/typeerror-object-of-type-int-has-no-len-error-assistance-needed
-irregular_ts = ts[list(np.random.choice(a = list(range(len(ts))), size = 10, replace= False)) ] #credits: @e.doroskevic
+irregular_ts = ts[list(np.random.choice(a = list(range(len(ts))), size = numPoints1 , replace= isreplace1 )) ] #credits: @e.doroskevic
 
 irregular_ts =  irregular_ts.sort_index()
 print(irregular_ts)
@@ -184,25 +222,31 @@ print(irregular_ts)
 
 print( irregular_ts.resample('H').fillna( method='ffill', limit=5 ) )
 #where samples gone : how to resample?
+
 """limit
-Use limitation , sometimes, which is useful for an irregular timeseries
-Especially if data comes in chuncks
-Maybe, have a user reports all morning
-(20 mins user tells medication)
-Then goes silent, till afternoon
-That is good: I might have to forward fill 'ffill' in the morning
-So, if irregular data, I can sort of bring things forward
+
+Use limitation , sometimes, for `irregular data`: it is useful for an  timeseries
+Especially if data comes in `chuncks` (me: spikes: huge ups, downs)
+Maybe, have a user reports all morning (me : ~ 9 am- 10 am
+(20-mins user tells medication)
+Then goes silent: till Afternoon (me: ~ 3 pm  4 pm)
+"""
+
+"""# ForwardFill
+
+I might have to forward fill 'ffill' in the morning
+But, if (it's) irregular data, can bring things `forward`
 
 But, I wouldn't bring forward my 11 am reading all the way to 4pm
-here is where ffill is usefull,
-I could extrapolate a bit (without going crazy)
-
+here is where ffill is useful,
+I could extrapolate a bit (without going crazy!):
 
 """
 
 
-#experiment with the resampler
-## resample Hourly 
+#Irregular Data - Experiment with the resampler
+## Resample Hourly
+
 resampler = irregular_ts.resample('H')
 print("Mean")
 print( resampler.mean())
@@ -210,130 +254,228 @@ print("Var")
 print( resampler.var() ) 
 
 # Moving window function
-"""I know the whole Span!
-but, tell me how are we doing, lately ?
 
-1. Rolling window : familiar (small businesses
+"""I know the whole Span,
+But, tell me how are we doing, lately ?
+
+1. Rolling window : familiar (small businesses)
  while days might go up or down,
- owner wants to know how he's doing on weekly basis
+ owner wants to know how he's doing, on weekly basis (weekly)
 
- money made, over last 3 days
+ (then,) the money made (profit), over last 3 days
 
  2. Expanding window
- sometimes, you might get more data
+ Sometimes, you might get more data
  and all data (more distance, less distant in time)  are equally relevant
 
-You're using all the data that you have
-looking how that is changing over time
+You're using all the data (you want)
+- look how data is changing over time
 
-for small time , rolloing , expanding window the same
+For small time, rolling, expanding window the same
 
-they match the time average
-taking mean
-the exampning window's mean will not go down, as quickly ,
-because it remembers the mean , in earlier dates
-weights them just as heavily, as the recent dates
-lots of resons
-1. protected in your own analysis:
-from the meaningless, rapid change
+They match the time average:
+Taking the mean:
 
-i.e. Economics: some shocks might be uninformative (for your analysis)
-you can sort of integrate those away
-Sometimes it makes sense, somnetimes it doesn't
+Note:the sampling window's mean will not go down, as quickly [Why?]
+"""
 
-Q. why the rolling window is not as good as the actual series ?
+"""2 Hypotheses
 
-A. got a bit of Latency (when setting last  3 days important (me:3MA) ) 
+-me: Hypothesis 1: Mean-reversion:
+Because it remembers the mean ( in earlier dates)
+
+weights them just as heavily, as the recent dates [Why?]
+(For) lots of resons:
+
+1. (You're) protected (Well-formed) in your own analysis:
+From the meaningless, rapid change
+
+Noise  i.e. in Economics : some shocks might be un-informative (for your analysis)
+You can - sort of- integrate those away:
+
+Note: "Sometimes it makes sense, sometimes it doesn't"
+
+
+Q. why the `rolling window` is not as good as the actual series ?
+
+A. (Has) got a bit of Latency (when setting last 3 days important (me:3MA) ) 
 Today is the most important (me: 1MA)
 
-# I am realizing I am looking at the wrong statistics
-Q. how to deal with this?
-A. 1. recenter your data (presentation)
-    2. weight, differently
+# (What-if:) I am realizing I am looking at the wrong statistics
+Q. How to deal with this?
+A.(workarounds)
+   1. re-center your data (presentation)
+   2. weight (data) differently
 
-Hypothesis: the further away it gets, the less informative it gets
- the less I'm gonna weight it
+- Hypothesis 2: Present is more important: the further away it gets, the less informative it gets
+ So, the less I'll weight it )
+ 
+Special thing about time series: data points relate to one another
+ So, they are not independent ]
 
-special thing about time series: data points relate to one another
-they are not independent
 
-so we can compare them , and relate them .
+Hence, we can compare them , and relate them. [How?]
+
 One way to do this is to look  at how they change
-example: we can difference a time series
+Example: we can difference a time series
+"""
 
+"""
+Takeaway: Sampling Assumption  Assume I.I.D (Identically Independent Data)
+ you don't start the day with assumption that:
+ 
+ "Today's value is Independent (of yesterday's value)
+ Q. What's the best predictor of tomorrow's temperature?
+ A. Today's temperature , probably (is it dependent?)
+ - It is dependent!
+ So, we want to use the `rolling window`, to use the best information we have
+ (Although it is not the best information! )
 
- Takeaway: assume IID (Identically Independent
- you don't start the day with assumtion that:
- "today's value is Independent (of yesterday's value)
- Q. what's the best predictor of tomorrow's temperature?
- A. today's temperature , probably (is it dependent?)
- - it is dependent
- So, we want to use the rolling window, to use the best information we have
- (Although it is not the best information )
+Relating immediate days to each other [How?]: differencing, shifting
 
-Relating immediate days to each other: differencing, shifting
-
-in pandas, it's such a common operation, it is easily done.
+In Pandas, it's a common operation, easily done:
 
 """
 
+#Takeaway: Assume timeseries is `Normally Distributed`
+
+#1. Generate (randomize  normally distributed (default assumption ) 
 # ts = pd.Series(np.random.randn(20), pd.date_range('7/1/16',freq = 'D',periods=20))
+# Takeaway: Range's triad:
+##1. Starting date
+##2. frequency: freq = 'D'
+##3. periodicity: periods =20
+
+#Now, it moved the data back, 1 period (for freq='D') that is 1 Day
+#Where we start getting all those `Synergies`, work on timestamps,
+#Time-related function
+
+
+#change start Data and Periods
+
+##hyperParameters Quarted
+
+# 1. starting Date 
+startingDate2 = '7/1/16'
+
+#2. frequency 
+frequency1 = 'D'
+
+#1. numPoints
+
+numPoints2 = 20
+
+#2. startingDate
+
+startingDate = '7/1/16'  # '1/1/2011'
+#3. frequency
+
+frequency1 = 'D' # 'H'
+
+#4. periods  
+
+periods2 = 20  #72
 
 
 
+ts = pd.Series(np.random.randn(20), pd.date_range('7/1/16', freq='D', periods=20)) #length values =20 must match periods=20 (otherwise date_range wouldn't work)
 
-ts = pd.Series(np.random.randn(20), pd.date_range('7/1/16', freq='D', periods=20)) #length values =20 must match periods=20
-#Introduce a log
+# or generalized regular timeseries form as follows:
+
+ts = pd.Series(np.random.randn(numPoints2), pd.date_range('7/1/16' , freq= 'D' , periods= numPoints2 )) # regular timeseries must have numPoints2 = periods2 = 20  (else it won't work ) [why] it is a Regular timeseries!
+
+#1. Introduce a lag
 ts_lagged = ts.shift()
 
-#
-
+#2. Plot
 plt.plot(ts, color = 'blue' )
 plt.plot(ts_lagged, color = 'red')
 plt.show()
 
-#it moved the data back , 1 period (for freq='D') that is 1 Day
-#Where we start getting all those Synergies, work on timestamps,
-#time related function
-
-
-#what-if:
-## I want things Hourly
-## I want to move 5 hours
-###I want to change my frequency freq = 'H' , shift ts.shift(5)
-ts = pd.Series(np.random.randn(20), pd.date_range('7/1/16', freq='H', periods=20)) #length values =20 must match periods=20
-#Introduce a log
-ts_lagged = ts.shift(5)
-plt.plot(ts, color = 'blue' )
-plt.plot(ts_lagged, color = 'red') # the lag is in red, the lag is forward in time
-plt.show()
 # I have  changed things in matter of hours
 
 ##Q. what If I want to shift into the 'Past' ?
 
-##A. shift, shift -5 , ts.shift(-5)
+##A. Negative numbers: shift(+5), shift (-5), ts.shift(-5)
 
-ts = pd.Series(np.random.randn(20), pd.date_range('7/1/16', freq='H', periods=20)) #length values =20 must match periods=20
+# What-if:
 
-#Introduce a log
+# I want things in:
+##  1. Hourly
+##  2. 5H (shift= 5 move 5 hours)
+### 3. change  frequency freq = 'H' , shift ts.shift(5)
 
+#1. Generate data (from random)
+
+#  parameters's Pentagon (to play with) :
+
+# 1. starting_date = 7/1/16
+# 2. Points generated : numPoints =  20
+# 3. frequency = H
+# 4. periods:  numPoints= 20
+# 5. lag = 5
+
+# hyperParameters (Quartet):
+
+#1. numPoints
+numPoints2 = 20
+
+#2. startingDate
+startingDate2 = '7/1/16'
+
+#3.  frequency
+frequency2 = 'H'
+
+#4.  lag
+lag2 = 5
+
+# ----
+
+#1. Generate timeseries
+
+ts = pd.Series(np.random.randn(20), pd.date_range('7/1/16' , freq= 'H' , periods= 20 )) #length values =20 (numPoints) must match periods i.e. numPoints = 20 && periods =20 
+
+#2. Lag
 ts_lagged = ts.shift(-5)
+
+#3. Plot
+plt.plot(ts, color = 'blue' )
+plt.plot(ts_lagged, color = 'red') # the lag is in red, the lag is forward in time
+plt.show()
+
+#1. Generate 
+ts = pd.Series(np.random.randn(numPoints2), pd.date_range(startingDate2 , freq= frequency2 , periods= numPoints2 )) #length values =20 must match periods=20
+
+#2. Introduce a lag
+ts_lagged = ts.shift(lag2) # -5
+
+#3. Plot
 plt.plot(ts_lagged, color = 'red') 
 plt.plot(ts, color = 'blue' )# the lag is in Blue, the lag is forward in time
 
 plt.show()
 
-#Takeaway: there is something called tshift
-#shift indicies rather data
+#Takeaway: To shift indicies rather than data, &  use t-shift
+
 """I avoid tshifts
-sometimes It renders data funky
+sometimes It renders data `funky`
 (it had martin Luther King day, where it shouldn't)
 
+#Generation Algorithm (triad)
+1. Generate (from random distribution)  
+2. lag [Auto-correlation]
+3. plot
+
+
+Takeaways [5+]:
+1. by fill irregularized timeseries, it become `regularized`
+2. Sampling Assumption  Assume I.I.D (Identically Independent Data)
+3. Assumption: timeseries is `Normally Distributed` (me: vanilla timeseries) 
+4. To shift indicies rather than data  , use t-shift
+5. you can interpolate, Unless you KNOW your data, ahead of you
+6. Extra: Documentation:  "the more flexible (a function ) is, the less would be documented"
+
 """
-
-
-
-
 
 
 
